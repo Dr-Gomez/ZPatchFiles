@@ -78,7 +78,7 @@ install_packages() {
   sudo add-apt-repository --yes multiverse
   sudo apt update
   sudo apt install -y plocate build-essential llvm pkg-config cmake ninja-build \
-    python3-pip curl git zsh tmux htop neofetch ripgrep fzf jq
+    python3-pip curl git zsh tmux htop neofetch ripgrep fzf jq gettext
   sudo updatedb
 }
 
