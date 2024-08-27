@@ -82,7 +82,32 @@ install_packages() {
   sudo updatedb
 }
 
+remove_neovim() {
+    if command -v nvim >/dev/null 2>&1; then
+        print_message "YELLOW" "REMOVING NEOVIM..."
+        
+        # Check for package manager installation and remove
+        if dpkg -l | grep -q 'neovim'; then
+            sudo apt remove -y neovim
+        elif brew list --formula | grep -q 'neovim'; then
+            brew uninstall neovim
+        elif pacman -Qs neovim > /dev/null; then
+            sudo pacman -Rns neovim
+        fi
+
+        # Remove possible directories left behind
+        rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
+
+        print_message "GREEN" "Neovim has been removed."
+    else
+        print_message "RED" "No existing Neovim installation found."
+    fi
+}
+
+
 install_neovim() {
+  remove_neovim
+
   if ! command -v nvim >/dev/null 2>&1; then
     print_message "YELLOW" "INSTALLING NEOVIM ..."
     git clone https://github.com/neovim/neovim "$DOTDIR/neovim"
