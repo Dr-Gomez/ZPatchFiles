@@ -95,8 +95,7 @@ remove_neovim() {
             sudo pacman -Rns neovim
         fi
 
-        # Remove possible directories left behind
-        rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
+        rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim "$DOTDIR/neovim"
 
         print_message "GREEN" "Neovim has been removed."
     else
