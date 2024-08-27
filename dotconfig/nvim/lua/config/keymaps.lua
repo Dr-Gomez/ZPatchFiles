@@ -5,7 +5,12 @@
 local opts = { noremap = true, silent = true }
 local keymap = vim.keymap
 
+-- Sets navigation keymaps
 -- j/k = down/up, h/l = left/right
 
 keymap.set("n", "<leader><Left>", "<C-w>h", opts)
 keymap.set("n", "<leader><Right>", "<C-w>l", opts)
+
+-- Disables default macro record
+
+keymap.set("n", "q", "<Nop>", opts)
