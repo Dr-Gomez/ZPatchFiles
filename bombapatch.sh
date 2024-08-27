@@ -158,8 +158,28 @@ remove_neovim() {
     fi
 }
 
+install_lazygit() {
+  echo
+  if lazygit --version >/dev/null 2>&1; then
+    msg="Lazygit already installed."
+    print_green "${msg}"
+  else
+    msg="Installing Lazygit..."
+    print_yellow "${msg}"
+    cd "$DOTDIR" || exit
+    mkdir temp
+    cd temp || exit
+    LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+    tar xf lazygit.tar.gz lazygit
+    sudo install lazygit /usr/local/bin
+    cd "$DOTDIR" || exit
+  fi
+}
+
 install_neovim() {
   remove_neovim
+  install_lazygit
 
   if ! command -v nvim >/dev/null 2>&1; then
     print_message "YELLOW" "INSTALLING NEOVIM ..."
@@ -209,7 +229,7 @@ bomba_patch() {
 
 main() {
   link_dotfiles
-  install_packages
+  install_basic_packages
   install_neovim
   install_docker
   bomba_patch
