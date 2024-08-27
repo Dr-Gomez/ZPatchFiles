@@ -130,17 +130,17 @@ install_neovim() {
     git checkout v0.10.1
     make CMAKE_BUILD_TYPE=RelWithDebInfo -j"$(nproc)"
     sudo make install
-  else
-    print_message "GREEN" "Neovim already installed."
   fi
 
   # Install LazyVim
-  if [ ! -d "$HOME/.local/share/nvim/lazy" ]; then
-    print_message "YELLOW" "INSTALLING LazyVim ..."
-    nvim --headless "+Lazy! install" +qa
-  else
-    print_message "GREEN" "LazyVim already installed."
-  fi
+  mv ~/.config/nvim{,.bak}
+
+  mv ~/.local/share/nvim{,.bak}
+  mv ~/.local/state/nvim{,.bak}
+  mv ~/.cache/nvim{,.bak}
+
+  git clone https://github.com/LazyVim/starter ~/.config/nvim
+  rm -rf ~/.config/nvim/.git
 }
 
 install_docker() {
