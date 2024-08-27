@@ -82,6 +82,23 @@ install_packages() {
   sudo updatedb
 }
 
+setup_nvim_alias() {
+  local shell_rc
+  if [ -f "$HOME/.bashrc" ]; then
+    shell_rc="$HOME/.bashrc"
+  elif [ -f "$HOME/.zshrc" ]; then
+    shell_rc="$HOME/.zshrc"
+  else
+    print_message "RED" "No suitable shell configuration file found."
+    return 1
+  fi
+
+  print_message "YELLOW" "Setting up nvim alias in $shell_rc..."
+  
+  echo 'alias nvim="/usr/local/bin/nvim"' >> "$shell_rc"
+  source "$shell_rc"
+}
+
 remove_neovim() {
     if command -v nvim >/dev/null 2>&1; then
         print_message "YELLOW" "REMOVING NEOVIM..."
