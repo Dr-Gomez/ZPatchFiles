@@ -120,7 +120,6 @@ remove_neovim() {
     fi
 }
 
-
 install_neovim() {
   remove_neovim
 
@@ -133,6 +132,14 @@ install_neovim() {
     sudo make install
   else
     print_message "GREEN" "Neovim already installed."
+  fi
+
+  # Install LazyVim
+  if [ ! -d "$HOME/.local/share/nvim/lazy" ]; then
+    print_message "YELLOW" "INSTALLING LazyVim ..."
+    nvim --headless "+Lazy! install" +qa
+  else
+    print_message "GREEN" "LazyVim already installed."
   fi
 }
 
