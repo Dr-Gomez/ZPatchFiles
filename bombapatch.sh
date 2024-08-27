@@ -214,12 +214,16 @@ install_docker() {
   fi
 }
 
+install_discord() {
+  sudo apt install discord
+}
+
 bomba_patch() {
   echo "100% atualizado"
   sleep 2
   echo "É ruim de aturar"
   sleep 2
-  echo "Bombapatch virou moda"
+  echo "Patch script virou moda"
   sleep 2
   echo "todo mundo quer instalar"
 }
@@ -229,6 +233,7 @@ main() {
   install_basic_packages
   install_neovim
   install_docker
+  install discord
   bomba_patch
 }
 
