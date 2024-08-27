@@ -7,6 +7,7 @@ DOTDIR="$ME/ZPatchFiles"
 NVMDIR="$ME/.nvm"
 DOTLOCAL="$ME/.local"
 CFG="$ME/.config"
+BINDIR="$DOTDIR/bin"
 
 # Color definitions
 declare -A COLORS=(
@@ -26,6 +27,7 @@ print_message() {
 link_file() {
   local source=$1
   local target=$2
+  echo "trying to link ${source} to ${target}"
   sudo rm -rf "$target"
   ln -s "$source" "$target"
 }
@@ -33,7 +35,7 @@ link_file() {
 link_dotfiles() {
   print_message "YELLOW" "LINKING DOTFILES ..."
   mkdir -p "$DOTLOCAL"
-  
+
   home_files=(
     "profile/profile .profile"
     "bash/bashrc .bashrc"
@@ -49,7 +51,7 @@ link_dotfiles() {
     "attract .attract"
     "vst3 .vst3"
   )
-  
+
   config_files=(
     "scummvm"
     "screenkey"
@@ -61,12 +63,13 @@ link_dotfiles() {
     "picom"
     "dunst"
     "neofetch"
+    "nvim"
   )
-  
+
   for file in "${home_files[@]}"; do
     link_file "$DOTDIR/homeconfig/${file% *}" "$ME/${file#* }"
   done
-  
+
   for file in "${config_files[@]}"; do
     link_file "$DOTDIR/dotconfig/$file" "$CFG/$file"
   done
@@ -79,8 +82,8 @@ install_basic_packages() {
   # sudo killall packagekitd
   sudo systemctl daemon-reload
   sudo add-apt-repository --yes multiverse
-  sudo aptitude update
-  sudo aptitude -y install plocate build-essential llvm \
+  sudo apt --assume-yes update
+  sudo apt --assume-yes install plocate build-essential llvm \
     pkg-config autoconf automake cmake cmake-data autopoint \
     ninja-build gettext libtool libtool-bin g++ meson \
     clang clang-tools ca-certificates curl gnupg lsb-release \
@@ -113,10 +116,17 @@ install_basic_packages() {
     libncurses5-dev libreadline-dev usbview v4l-utils \
     libxrender-dev libglew-dev python3-venv
 
-  # sudo aptitude install \
+  # sudo apt --assume-yes install install \
   #     openjdk-8-jre=8u312-b07-0ubuntu1 \
   #     openjdk-8-jre-headless=8u312-b07-0ubuntu1
   sudo updatedb
+}
+
+setup_fonts() {
+  rm -rf "$ME"/.fonts >/dev/null 2>&1 &&
+    ln -s "$DOTDIR"/fonts "$ME"/.fonts ||
+    ln -s "$DOTDIR"/fonts "$ME"/.fonts
+  fc-cache -f
 }
 
 setup_nvim_alias() {
@@ -131,30 +141,30 @@ setup_nvim_alias() {
   fi
 
   print_message "YELLOW" "Setting up nvim alias in $shell_rc..."
-  
-  echo 'alias nvim="/usr/local/bin/nvim"' >> "$shell_rc"
+
+  echo 'alias nvim="/usr/local/bin/nvim"' >>"$shell_rc"
   source "$shell_rc"
 }
 
 remove_neovim() {
-    if command -v nvim >/dev/null 2>&1; then
-        print_message "YELLOW" "REMOVING NEOVIM..."
-        
-        # Check for package manager installation and remove
-        if dpkg -l | grep -q 'neovim'; then
-            sudo apt remove -y neovim
-        elif brew list --formula | grep -q 'neovim'; then
-            brew uninstall neovim
-        elif pacman -Qs neovim > /dev/null; then
-            sudo pacman -Rns neovim
-        fi
+  if command -v nvim >/dev/null 2>&1; then
+    print_message "YELLOW" "REMOVING NEOVIM..."
 
-        rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim "$DOTDIR/neovim"
-
-        print_message "GREEN" "Neovim has been removed."
-    else
-        print_message "RED" "No existing Neovim installation found."
+    # Check for package manager installation and remove
+    if dpkg -l | grep -q 'neovim'; then
+      sudo apt remove -y neovim
+    elif brew list --formula | grep -q 'neovim'; then
+      brew uninstall neovim
+    elif pacman -Qs neovim >/dev/null; then
+      sudo pacman -Rns neovim
     fi
+
+    rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim "$DOTDIR/neovim"
+
+    print_message "GREEN" "Neovim has been removed."
+  else
+    print_message "RED" "No existing Neovim installation found."
+  fi
 }
 
 install_lazygit() {
@@ -175,7 +185,7 @@ install_lazygit() {
 }
 
 install_neovim() {
-  remove_neovim
+  #remove_neovim
   install_lazygit
 
   if ! command -v nvim >/dev/null 2>&1; then
@@ -186,16 +196,6 @@ install_neovim() {
     make CMAKE_BUILD_TYPE=RelWithDebInfo -j"$(nproc)"
     sudo make install
   fi
-
-  # Install LazyVim
-  mv ~/.config/nvim{,.bak}
-
-  mv ~/.local/share/nvim{,.bak}
-  mv ~/.local/state/nvim{,.bak}
-  mv ~/.cache/nvim{,.bak}
-
-  git clone https://github.com/LazyVim/starter ~/.config/nvim
-  rm -rf ~/.config/nvim/.git
 }
 
 install_docker() {
@@ -230,12 +230,12 @@ bomba_patch() {
 
 main() {
   link_dotfiles
+  setup_fonts
   install_basic_packages
   install_neovim
   install_docker
-  install discord
+  install_discord
   bomba_patch
 }
 
 main
- 
