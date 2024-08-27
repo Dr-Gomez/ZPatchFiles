@@ -74,9 +74,8 @@ link_dotfiles() {
 
 install_basic_packages() {
   echo
-  msg="INSTALLING BASIC PACKAGES ..."
+  print_message "YELLOW" "${msg}""INSTALLING BASIC PACKAGES ..."
   mkdir -p "${BINDIR}"
-  print_yellow "${msg}"
   # sudo killall packagekitd
   sudo systemctl daemon-reload
   sudo add-apt-repository --yes multiverse
@@ -161,11 +160,9 @@ remove_neovim() {
 install_lazygit() {
   echo
   if lazygit --version >/dev/null 2>&1; then
-    msg="Lazygit already installed."
-    print_green "${msg}"
+    print_message "GREEN" "Lazygit already installed."
   else
-    msg="Installing Lazygit..."
-    print_yellow "${msg}"
+    print_message "GREEN" "Installing Lazygit..."
     cd "$DOTDIR" || exit
     mkdir temp
     cd temp || exit
