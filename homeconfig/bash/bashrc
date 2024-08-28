@@ -1,0 +1,3 @@
+ME="/home/$(whoami)"
+DOTFILESPATH="ZPatchFiles"
+export PATH=$PATH:$ME/$DOTFILESPATH/scripts
