@@ -214,6 +214,10 @@ install_docker() {
   fi
 }
 
+install_vscode() {
+  sudo apt install code
+}
+
 install_discord() {
   sudo apt install discord
 }
@@ -234,6 +238,7 @@ main() {
   install_basic_packages
   install_neovim
   install_docker
+  install_vscode
   install_discord
   bomba_patch
 }
