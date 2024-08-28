@@ -14,3 +14,7 @@ keymap.set("n", "<leader><Right>", "<C-w>l", opts)
 -- Disables default macro record
 
 keymap.set("n", "q", "<Nop>", opts)
+
+-- Reload neovim
+
+keymap.set("n", "<leader>rr", "<cmd>lua os.exit(1)<CR>")
