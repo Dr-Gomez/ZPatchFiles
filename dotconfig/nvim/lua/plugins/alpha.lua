@@ -27,7 +27,7 @@ return {
 
     -- Set footer
     local function footer()
-      return "  Powered by Neovim"
+      return "100% Atualizado"
     end
     dashboard.section.footer.val = footer()
 
